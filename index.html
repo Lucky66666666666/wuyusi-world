@@ -1,80 +1,147 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>无隅寺 · 3D云上禅境</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>无隅寺 · 九大区域</title>
 <style>
-:root{--gold:#e8c77b;--ink:#f6edda;--panel:rgba(20,27,25,.78)}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101b1b;color:var(--ink);font-family:"Microsoft YaHei",system-ui,sans-serif}canvas{display:block}#hud{position:fixed;inset:0;pointer-events:none}.top{position:absolute;top:16px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.brand{background:var(--panel);border:1px solid #c8a96866;border-radius:14px;padding:10px 15px;backdrop-filter:blur(8px);box-shadow:0 8px 28px #0004}.brand strong{display:block;color:var(--gold);font-size:19px;letter-spacing:4px}.brand small{color:#d8d0bd;font-size:11px;letter-spacing:1px}.actions{display:flex;gap:8px;pointer-events:auto}.btn{border:1px solid #d7bd7a88;background:var(--panel);color:#f8e8c4;border-radius:12px;padding:10px 13px;font-size:13px;cursor:pointer;backdrop-filter:blur(8px)}.btn:hover{background:#4c4938}.panel{position:absolute;right:18px;top:84px;width:208px;background:var(--panel);border:1px solid #c8a96866;border-radius:14px;padding:13px;backdrop-filter:blur(8px);pointer-events:auto}.panel h3{margin:0 0 9px;color:var(--gold);font-size:14px;letter-spacing:2px}.zone{display:block;width:100%;text-align:left;background:#ffffff0a;border:1px solid #ffffff12;color:#eee3ce;border-radius:8px;padding:8px 9px;margin:5px 0;cursor:pointer;font-size:12px}.zone:hover{background:#c5a75b30;border-color:#c5a75b77}.zone span{color:#cbb57f;margin-right:7px}.bottom{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:var(--panel);border:1px solid #c8a96866;border-radius:14px;padding:10px 16px;text-align:center;min-width:min(92vw,440px);backdrop-filter:blur(8px)}#hint{font-size:13px;color:#f5e7c9}#subhint{font-size:11px;color:#c6bca7;margin-top:4px}.toast{position:absolute;left:50%;top:25%;transform:translate(-50%,-10px);opacity:0;background:#1d2825ed;border:1px solid #c8a96888;border-radius:12px;padding:12px 18px;transition:.25s;max-width:85vw;text-align:center;font-size:14px}.toast.show{opacity:1;transform:translate(-50%,0)}#mobile{display:none;position:absolute;left:18px;bottom:28px;width:116px;height:116px;border-radius:50%;background:#ffffff14;border:1px solid #ffffff55;pointer-events:auto;touch-action:none}#stick{position:absolute;left:36px;top:36px;width:44px;height:44px;border-radius:50%;background:#e8c77b99;border:1px solid #fff8}#looktip{position:absolute;right:18px;bottom:32px;color:#eee5d3;background:#111a18aa;padding:8px 10px;border-radius:9px;font-size:11px;display:none}.modal{display:none;position:absolute;inset:0;background:#0009;align-items:center;justify-content:center;pointer-events:auto;padding:20px}.modal.show{display:flex}.dialog{max-width:440px;width:100%;background:#202b27;border:1px solid #c8a96888;border-radius:16px;padding:22px;box-shadow:0 20px 60px #0008}.dialog h2{margin:0 0 10px;color:var(--gold);font-size:20px}.dialog p{line-height:1.8;color:#e5ddcd;font-size:14px}.dialog .btn{margin-top:8px}.tag{display:inline-block;color:#dfc47f;border:1px solid #b99b5c66;padding:3px 8px;border-radius:20px;font-size:11px;margin:3px}
-@media(max-width:700px){.top{top:10px;left:10px;right:10px}.brand{padding:8px 10px}.brand strong{font-size:16px}.actions{gap:5px}.btn{padding:8px 9px;font-size:11px}.panel{display:none}.bottom{bottom:12px;padding:9px 12px}.bottom #hint{font-size:12px}#mobile{display:block}#looktip{display:block}}
-</style></head><body>
-<div id="hud"><div class="top"><div class="brand"><strong>无 隅 寺</strong><small>WUYU TEMPLE · 云上清净之境</small></div><div class="actions"><button class="btn" id="soundBtn">♫ 声音：关</button><button class="btn" id="ruleBtn">游览说明</button></div></div>
-<aside class="panel"><h3>寺院九境</h3><div id="zoneList"></div></aside><div class="bottom"><div id="hint">欢迎来到无隅寺 · 慢慢走，看看这方清净天地</div><div id="subhint">WASD 移动 · 鼠标拖动调整视角 · 靠近建筑可互动</div></div><div class="toast" id="toast"></div><div id="mobile"><div id="stick"></div></div><div id="looktip">拖动屏幕右侧可转动视角</div>
-<div class="modal" id="modal"><div class="dialog"><h2 id="modalTitle">游览说明</h2><div id="modalText"></div><button class="btn" id="closeModal">知道了</button></div></div></div>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#101912;color:#f7eed8;font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
+#game{position:fixed;inset:0}canvas{display:block}
+#top{position:fixed;top:14px;left:14px;z-index:5;background:#14251dcc;border:1px solid #b99b5a66;border-radius:12px;padding:10px 14px;backdrop-filter:blur(8px)}
+#top strong{display:block;font-size:17px;letter-spacing:2px;color:#f4dfaa}#top small{color:#d6c9a8}
+#help{position:fixed;right:14px;top:14px;z-index:5;background:#14251dcc;border:1px solid #b99b5a66;border-radius:12px;padding:10px 13px;font-size:12px;line-height:1.8;color:#eee2c6}
+#hint{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);z-index:6;background:#13251ee8;border:1px solid #c8a96a88;border-radius:12px;padding:12px 18px;min-width:230px;text-align:center;display:none;max-width:90vw}
+#hint b{color:#f2d48d}#toast{position:fixed;top:95px;left:50%;transform:translateX(-50%);z-index:8;background:#17291eea;border:1px solid #c5a768;border-radius:10px;padding:10px 16px;display:none}
+#sound{position:fixed;right:14px;bottom:18px;z-index:8;border:1px solid #c9aa69;background:#182b21;color:#f5e6c2;border-radius:22px;padding:10px 15px}
+#panel{position:fixed;inset:0;z-index:10;background:#06100dcc;display:none;align-items:center;justify-content:center;padding:20px}
+#panel .box{max-width:430px;width:100%;background:#1c3025;border:1px solid #c3a466;border-radius:18px;padding:24px;text-align:center;box-shadow:0 15px 60px #0009}
+#panel h2{color:#f0d69b;margin:0 0 12px}#panel p{line-height:1.8;color:#e7dfca}#close{margin-top:12px;background:#b18a48;color:#1b2119;border:0;border-radius:20px;padding:10px 24px;font-size:15px}
+#joy{position:fixed;left:22px;bottom:25px;width:116px;height:116px;border-radius:50%;background:#e9d8ad22;border:2px solid #e9d8ad66;z-index:7;display:none;touch-action:none}
+#stick{position:absolute;width:48px;height:48px;border-radius:50%;background:#e7d4a9bb;left:32px;top:32px;box-shadow:0 2px 10px #0007}
+#look{position:fixed;right:0;bottom:0;width:48%;height:55%;z-index:4;touch-action:none}
+@media(pointer:coarse){#joy{display:block}#help{font-size:11px;max-width:48vw}#top{top:10px;left:10px}#look{display:block}}
+@media(pointer:fine){#look{display:none}}
+</style>
+</head>
+<body>
+<div id="game"></div>
+<div id="top"><strong>无隅寺</strong><small>九大区域 · 3D探索世界</small></div>
+<div id="help">电脑：WASD 移动 · 鼠标拖动转向<br>靠近景点按 E 了解 · 滚轮缩放<br>手机：左侧摇杆移动 · 右侧滑动转向</div>
+<div id="hint"></div><div id="toast"></div>
+<button id="sound">♫ 声音：关闭</button>
+<div id="joy"><div id="stick"></div></div><div id="look"></div>
+<div id="panel"><div class="box"><h2 id="ptitle"></h2><p id="ptext"></p><button id="close">继续游览</button></div></div>
 <script type="module">
 import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x9bb7b0);scene.fog=new THREE.Fog(0x9bb7b0,65,175);
-const camera=new THREE.PerspectiveCamera(58,innerWidth/innerHeight,.1,300);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;document.body.appendChild(renderer.domElement);
-scene.add(new THREE.HemisphereLight(0xe5f2ed,0x5a5947,2.0));const sun=new THREE.DirectionalLight(0xffedce,2.3);sun.position.set(-35,55,25);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-90;sun.shadow.camera.right=90;sun.shadow.camera.top=90;sun.shadow.camera.bottom=-90;scene.add(sun);
-const mat=(c,r=.85)=>new THREE.MeshStandardMaterial({color:c,roughness:r});const stone=mat(0x8b9185),pathmat=mat(0xb8aa8b),wood=mat(0x704532),darkwood=mat(0x49352b),roofmat=mat(0x334c49),gold=mat(0xc7a45d),leaf=mat(0x55775a),leaf2=mat(0x78915e),water=mat(0x628d8b,.3);
-function box(parent,x,y,z,sx,sy,sz,m){let o=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
-function cylinder(parent,x,y,z,rt,rb,h,m,n=12){let o=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,n),m);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;parent.add(o);return o}
-function roof(parent,x,y,z,w,d){let g=new THREE.Group();g.position.set(x,y,z);parent.add(g);let base=new THREE.Mesh(new THREE.BoxGeometry(w,.28,d),roofmat);base.position.y=.12;base.castShadow=true;g.add(base);let ridge=box(g,0,.34,0,w*.72,.12,.16,gold); // four sloping roof planes
-const verts=[[-w/2,.2,-d/2],[w/2,.2,-d/2],[0,.9,0],[-w/2,.2,d/2],[w/2,.2,d/2]];function tri(a,b,c){let geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute([...a,...b,...c],3));geo.computeVertexNormals();let mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:0x3e625c,side:THREE.DoubleSide,roughness:.9}));mesh.castShadow=true;g.add(mesh)}tri(verts[0],verts[1],verts[2]);tri(verts[1],verts[4],verts[2]);tri(verts[4],verts[3],verts[2]);tri(verts[3],verts[0],verts[2]);return g}
-function pavilion(x,z,w=14,d=11,scale=1){let g=new THREE.Group();g.position.set(x,0,z);scene.add(g);box(g,0,.35,0,w,.7,d,stone);box(g,0,.8,0,w*.82,.25,d*.82,wood);for(let xx of [-w*.36,w*.36])for(let zz of [-d*.34,d*.34])cylinder(g,xx,2.1,zz,.28,.34,2.6,darkwood,10);box(g,0,2.1,0,w*.78,2.5,d*.72,wood);box(g,0,1.3,d*.37,w*.56,1.2,.12,darkwood);roof(g,0,3.45,0,w*1.13,d*1.16);for(let i=-2;i<=2;i++)box(g,i*w*.12,1.55,d*.375,.1,.8,.14,gold);return g}
-function tree(x,z,size=1){let g=new THREE.Group();g.position.set(x,0,z);scene.add(g);cylinder(g,0,2*size,0,.35*size,.55*size,4*size,wood,9);for(let i=0;i<7;i++){let a=i*Math.PI*2/7;let s=new THREE.Mesh(new THREE.IcosahedronGeometry((2.2+Math.random()*.5)*size,1),i%2?leaf:leaf2);s.position.set(Math.cos(a)*.8*size,(3.4+Math.random()*1.6)*size,Math.sin(a)*.8*size);s.scale.y=.8;s.castShadow=true;g.add(s)}return g}
-// Ground and paths
-box(scene,0,-.65,0,180,1.2,180,mat(0x71846a));const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),mat(0x829477));ground.rotation.x=-Math.PI/2;ground.position.y=-.04;ground.receiveShadow=true;scene.add(ground);
-// central stone plaza
-cylinder(scene,0,.02,0,17,17,.18,pathmat,48);cylinder(scene,0,.13,0,10,10,.12,stone,48);cylinder(scene,0,.22,0,4.2,4.2,.1,gold,48);
-// radial paths
-for(let a=0;a<8;a++){let angle=a*Math.PI/4;let p=box(scene,Math.sin(angle)*16,.015,Math.cos(angle)*16,5,.08,30,pathmat);p.rotation.y=angle}
-// temple locations and structures
-const zones=[
-{id:'hall',name:'大雄宝殿',desc:'庄严的大殿，是礼佛、静心与安坐的地方。第一版先开放场景参观。',x:0,z:-38,icon:'☸',kind:'hall'},
-{id:'tree',name:'千年古树',desc:'在古树下稍作停留，听风穿过枝叶，给自己一点安静的时间。',x:-34,z:-25,icon:'🌳',kind:'tree'},
-{id:'courtyard',name:'清净大院',desc:'青石铺地，庭院深深。适合慢慢散步、欣赏寺院景致。',x:34,z:-25,icon:'🏯',kind:'yard'},
-{id:'noodle',name:'斋面馆',desc:'一碗清淡斋面，寄托一份简单的温暖。吃面与金币系统将在后续阶段开放。',x:-39,z:22,icon:'🍜',kind:'noodle'},
-{id:'deer',name:'灵鹿园',desc:'小鹿在林间悠闲漫步，请轻声靠近，不惊扰它们。',x:39,z:22,icon:'🦌',kind:'deer'},
-{id:'fortune',name:'天机算命摊',desc:'未来开放趣味命理对话，仅供娱乐与自我反思，不作为现实决策依据。',x:-20,z:43,icon:'☯',kind:'stall'},
-{id:'peach',name:'千愿桃树',desc:'把心愿放在心里，也可以在这里留下祝福。线上祈愿功能后续开放。',x:20,z:43,icon:'🌸',kind:'peach'},
-{id:'incense',name:'香火广场',desc:'香炉袅袅，愿每一份心意都被温柔以待。随喜祈愿功能将在后续开放。',x:0,z:15,icon:'🪷',kind:'incense'},
-{id:'abbot',name:'方丈禅院',desc:'清幽小院，未来将开放方丈对话、祝福与纪念称号等内容。',x:0,z:-59,icon:'🪷',kind:'abbot'}
+const mount=document.getElementById('game');
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x9eb7b0);scene.fog=new THREE.Fog(0x9eb7b0,48,135);
+const camera=new THREE.PerspectiveCamera(62,innerWidth/innerHeight,.1,300);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;mount.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe7f2eb,0x59634a,2.0));
+const sun=new THREE.DirectionalLight(0xffe5b5,2.2);sun.position.set(-28,45,24);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);sun.shadow.camera.left=-70;sun.shadow.camera.right=70;sun.shadow.camera.top=70;sun.shadow.camera.bottom=-70;scene.add(sun);
+const mat=(c,r=.9)=>new THREE.MeshStandardMaterial({color:c,roughness:r});
+const ground= new THREE.Mesh(new THREE.PlaneGeometry(180,180),mat(0x526d4e));ground.rotation.x=-Math.PI/2;ground.receiveShadow=true;scene.add(ground);
+function box(x,y,z,w,h,d,color){let m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(color));m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;scene.add(m);return m}
+function roof(x,z,w,d,y,color=0x704333){let g=new THREE.Group();let m=new THREE.Mesh(new THREE.ConeGeometry(1,1,4),mat(color));m.scale.set(w*.78,.95,d*.78);m.rotation.y=Math.PI/4;m.position.y=y;g.add(m);let ridge=box(0,0,0,w*1.45,.12,.16,0x3c2921);ridge.position.set(0,y+.5,0);g.add(ridge);g.position.set(x,0,z);g.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true}});scene.add(g)}
+function building(x,z,w,d,h,color,label){
+ box(x,h/2,z,w,h,d,color);for(let dx of [-w*.36,w*.36])for(let dz of [-d*.36,d*.36])box(x+dx,h/2,z+dz,.22,h+.2,.22,0x5b3527);
+ roof(x,z,w,d,h+.35);
+ box(x,h*.45,z+d/2+.012,w*.32,h*.78,.08,0x4b2e22);
+ const sign=box(x,h+.15,z+d/2+.2,w*.45,.45,.08,0x9c7842);
+ textSprite(label,x,h+.85,z+d/2+.25);
+}
+function textSprite(text,x,y,z){const c=document.createElement('canvas');c.width=512;c.height=128;const ctx=c.getContext('2d');ctx.fillStyle='rgba(23,39,29,.86)';ctx.roundRect(4,4,504,120,18);ctx.fill();ctx.strokeStyle='#d5b875';ctx.lineWidth=5;ctx.stroke();ctx.fillStyle='#f7e6bd';ctx.font='bold 54px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,66);const t=new THREE.CanvasTexture(c);const s=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true}));s.position.set(x,y,z);s.scale.set(5.4,1.35,1);scene.add(s)}
+function path(x,z,w,d){let m=new THREE.Mesh(new THREE.BoxGeometry(w,.035,d),mat(0xb6a17a));m.position.set(x,.025,z);m.receiveShadow=true;scene.add(m)}
+// Courtyard paths and central plaza
+path(0,0,8,78);path(0,0,78,8);path(0,-22,5,30);path(0,22,5,30);path(-22,0,30,5);path(22,0,30,5);
+const plaza=new THREE.Mesh(new THREE.CylinderGeometry(8,8,.12,48),mat(0xc3b28c));plaza.position.y=.08;scene.add(plaza);
+const areas=[
+{name:'大雄宝殿',x:0,z:-31,desc:'寺院主殿，晨钟暮鼓，清净庄严。未来可在这里加入礼佛、上香与祈愿互动。',w:18,d:12,h:7,c:0xb89a72},
+{name:'千年古树',x:-31,z:-23,desc:'枝叶繁茂的千年古树，是游客静心休憩的地方。未来可加入树下许愿与季节变化。',tree:true},
+{name:'清净大院',x:-31,z:0,desc:'安静开阔的寺院庭院，可漫步、观景，也将作为探索地图的重要连接区域。',yard:true},
+{name:'斋面馆',x:31,z:-23,desc:'寺院斋面馆，炊烟袅袅。后续可加入点餐、用餐与斋饭互动。',w:12,d:10,h:4.5,c:0x9d7653},
+{name:'灵鹿园',x:31,z:0,desc:'林木环绕的灵鹿园。后续可加入鹿群漫步、喂食和故事互动。',deer:true},
+{name:'天机算命摊',x:-31,z:23,desc:'古朴的小摊位，未来可加入趣味签文与每日运势内容。',stall:true},
+{name:'千愿桃树',x:0,z:31,desc:'寄托心愿的桃树。后续可加入祈愿牌、愿望展示与互动动画。',peach:true},
+{name:'香火广场',x:0,z:0,desc:'寺院中心广场，是游客进入地图后的起点。未来可加入香炉、香火与祈愿系统。',center:true},
+{name:'方丈禅院',x:31,z:23,desc:'清幽的方丈禅院，未来可加入方丈与僧人角色、禅坐和诵经场景。',w:12,d:10,h:4.8,c:0x9a8665}
 ];
-// structures for the different districts
-pavilion(0,-38,17,13);pavilion(34,-25,13,10);pavilion(-39,22,12,9);pavilion(0,-59,12,10);pavilion(-20,43,9,7);pavilion(20,43,9,7);
-// courtyard walls / lanterns
-for(let i=-2;i<=2;i++){let x=34+i*4;box(scene,x,.9,-34,.18,1.8,.18,darkwood);cylinder(scene,x,1.95,-34,.22,.22,.38,gold,8)}
-// central incense burner
-cylinder(scene,0,.5,15,1.2,.85,1,gold,12);cylinder(scene,0,1.12,15,.65,.7,.25,darkwood,12);for(let a=0;a<3;a++)cylinder(scene,Math.cos(a*2.1)*.7,1.3,15+Math.sin(a*2.1)*.7,.09,.12,.5,gold,8);
-// ancient and peach trees
-let old=tree(-34,-25,1.65);old.children[0].scale.x=1.6;for(let i=0;i<3;i++)tree(20+(Math.random()-.5)*4,43+(Math.random()-.5)*4,.8);for(let i=0;i<18;i++)tree((Math.random()-.5)*145,(Math.random()-.5)*145,.45+Math.random()*.35);
-// deer garden, little deer made from simple meshes
-function deer(x,z){let g=new THREE.Group();g.position.set(x,0,z);scene.add(g);let body=new THREE.Mesh(new THREE.SphereGeometry(.75,12,10),mat(0xb58d5d));body.scale.set(1.2,.7,.65);body.position.y=1;g.add(body);let head=new THREE.Mesh(new THREE.SphereGeometry(.38,12,10),mat(0xc49d69));head.position.set(.7,1.55,0);g.add(head);for(let dx of [-.35,.35]){let leg=cylinder(g,dx,.48,0,.09,.11,.8,mat(0x785b42),8);leg.position.z=dx*.5}for(let dx of [-.15,.15]){cylinder(g,.7,2.05,dx,.035,.05,.55,mat(0x8a714e),6)}return g}for(let i=0;i<4;i++)deer(34+(i%2)*3,18+Math.floor(i/2)*4);
-// little ponds
-function pond(x,z){let p=new THREE.Mesh(new THREE.CircleGeometry(5,32),water);p.rotation.x=-Math.PI/2;p.position.set(x,.04,z);scene.add(p);for(let i=0;i<8;i++){let r=new THREE.Mesh(new THREE.CircleGeometry(.45,.5),mat(0x6b8962));r.rotation.x=-Math.PI/2;r.position.set(x+(Math.random()-.5)*7,.07,z+(Math.random()-.5)*7);scene.add(r)}}pond(48,-5);pond(-50,-3);
-// lanterns around main path
-for(let x=-12;x<=12;x+=6){for(let z of [-20,0,28]){cylinder(scene,x,1,z,.09,.12,2.1,darkwood,8);box(scene,x,2.05,z,.65,.55,.65,gold);}}
-// player character
-const player=new THREE.Group();scene.add(player);let body=new THREE.Mesh(new THREE.CapsuleGeometry(.48,.85,4,8),mat(0xe5c44d));body.position.y=1.05;body.castShadow=true;player.add(body);let face=new THREE.Mesh(new THREE.SphereGeometry(.34,16,12),mat(0xf1d9b0));face.position.set(0,1.55,.34);player.add(face);let eyeMat=mat(0x242521);for(let x of [-.12,.12]){let e=new THREE.Mesh(new THREE.SphereGeometry(.045,8,8),eyeMat);e.position.set(x,1.58,.64);player.add(e)}let robe=new THREE.Mesh(new THREE.CylinderGeometry(.38,.52,.55,12),mat(0x3e6b61));robe.position.y=.48;player.add(robe);player.position.set(0,0,5);
-// floating smoke at incense and noodle kitchen
-const smoke=[];function addSmoke(x,z,count=18){for(let i=0;i<count;i++){let s=new THREE.Mesh(new THREE.SphereGeometry(.22+Math.random()*.25,8,8),new THREE.MeshBasicMaterial({color:0xe6e4d8,transparent:true,opacity:.16,depthWrite:false}));s.position.set(x+(Math.random()-.5)*.7,1.5+Math.random()*4,z+(Math.random()-.5)*.7);s.userData={baseY:s.position.y,phase:Math.random()*6,speed:.25+Math.random()*.3};scene.add(s);smoke.push(s)}}addSmoke(0,15,22);addSmoke(-39,22,13);
-// simple signs
-function sign(x,z,text){let c=document.createElement('canvas');c.width=512;c.height=128;let ctx=c.getContext('2d');ctx.fillStyle='#243a34';ctx.fillRect(0,0,512,128);ctx.strokeStyle='#d0b36f';ctx.lineWidth=8;ctx.strokeRect(5,5,502,118);ctx.fillStyle='#f0d99e';ctx.font='bold 48px Microsoft YaHei';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(text,256,65);let tex=new THREE.CanvasTexture(c);let m=new THREE.Mesh(new THREE.PlaneGeometry(7,1.75),new THREE.MeshBasicMaterial({map:tex,transparent:true}));m.position.set(x,5,z);m.lookAt(camera.position);scene.add(m)}for(let z of zones)sign(z.x,z.z-7,z.name);
-// UI zone list
-const list=document.getElementById('zoneList');zones.forEach((z,i)=>{let b=document.createElement('button');b.className='zone';b.innerHTML=`<span>${z.icon}</span>${z.name}`;b.onclick=()=>{player.position.set(z.x,0,z.z+9);showToast('已来到：'+z.name+'（靠近后按 E 互动）')};list.appendChild(b)});
-const hint=document.getElementById('hint'),subhint=document.getElementById('subhint'),toast=document.getElementById('toast');let toastTimer;function showToast(t){toast.textContent=t;toast.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>toast.classList.remove('show'),2600)}
-let yaw=0,pitch=.28,keys={},drag=false,lastX=0,lastY=0,near=null;const clock=new THREE.Clock();
-function nearest(){let best=999;near=null;for(let z of zones){let d=Math.hypot(player.position.x-z.x,player.position.z-z.z);if(d<best){best=d;near=z}}if(best<10){hint.textContent='靠近了：'+near.name+' · 按 E 了解这里';subhint.textContent=near.desc}else{hint.textContent='欢迎来到无隅寺 · 慢慢走，看看这方清净天地';subhint.textContent='WASD 移动 · 鼠标拖动调整视角 · 靠近建筑可互动'}}
-function interact(){if(near){document.getElementById('modalTitle').textContent=near.icon+' '+near.name;document.getElementById('modalText').innerHTML=`<p>${near.desc}</p><div><span class="tag">3D场景已开放</span><span class="tag">功能持续建设中</span></div>`;document.getElementById('modal').classList.add('show')}else showToast('再靠近一些寺院建筑或景点，就可以查看介绍。')}
-addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-renderer.domElement.addEventListener('pointerdown',e=>{drag=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>drag=false);renderer.domElement.addEventListener('pointermove',e=>{if(drag){yaw-=(e.clientX-lastX)*.004;pitch=Math.max(-.05,Math.min(.75,pitch+(e.clientY-lastY)*.002));lastX=e.clientX;lastY=e.clientY}});
-let joy={x:0,y:0},mobile=document.getElementById('mobile'),stick=document.getElementById('stick'),joyOn=false;function joyMove(e){let r=mobile.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2,dx=e.clientX-cx,dy=e.clientY-cy,l=Math.hypot(dx,dy),max=38;if(l>max){dx*=max/l;dy*=max/l}joy.x=dx/max;joy.y=dy/max;stick.style.transform=`translate(${dx}px,${dy}px)`}mobile.addEventListener('pointerdown',e=>{joyOn=true;mobile.setPointerCapture(e.pointerId);joyMove(e)});mobile.addEventListener('pointermove',e=>{if(joyOn)joyMove(e)});mobile.addEventListener('pointerup',()=>{joyOn=false;joy={x:0,y:0};stick.style.transform='translate(0,0)'});mobile.addEventListener('pointercancel',()=>{joyOn=false;joy={x:0,y:0};stick.style.transform='translate(0,0)'});
-// on mobile, drag right-side screen to rotate camera
-let touchLook=false,tx=0;renderer.domElement.addEventListener('touchstart',e=>{if(e.touches[0].clientX>innerWidth*.45){touchLook=true;tx=e.touches[0].clientX}},{passive:true});renderer.domElement.addEventListener('touchmove',e=>{if(touchLook&&e.touches[0].clientX>innerWidth*.45){yaw-=(e.touches[0].clientX-tx)*.006;tx=e.touches[0].clientX}},{passive:true});renderer.domElement.addEventListener('touchend',()=>touchLook=false);
-document.getElementById('ruleBtn').onclick=()=>{document.getElementById('modalTitle').textContent='无隅寺 · 游览说明';document.getElementById('modalText').innerHTML='<p>电脑：使用 WASD 或方向键移动，按住鼠标左键拖动可转动视角，靠近景点后按 E 互动。<br>手机：使用左下角摇杆移动，拖动画面右侧转动视角。<br><br>当前版本为3D地图建设版，九大区域可参观，部分功能仍在开发中。金币、真实支付、账号、多人在线和禅坐计时尚未接入。</p>';document.getElementById('modal').classList.add('show')};document.getElementById('closeModal').onclick=()=>document.getElementById('modal').classList.remove('show');document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')e.currentTarget.classList.remove('show')});
-let audio=null,sound=false;document.getElementById('soundBtn').onclick=()=>{sound=!sound;document.getElementById('soundBtn').textContent='♫ 声音：'+(sound?'开':'关');if(sound){audio=audio||new (window.AudioContext||window.webkitAudioContext)();audio.resume();let o=audio.createOscillator(),g=audio.createGain();o.type='sine';o.frequency.setValueAtTime(220,audio.currentTime);o.frequency.exponentialRampToValueAtTime(110,audio.currentTime+2);g.gain.setValueAtTime(.0001,audio.currentTime);g.gain.exponentialRampToValueAtTime(.08,audio.currentTime+.05);g.gain.exponentialRampToValueAtTime(.0001,audio.currentTime+3);o.connect(g);g.connect(audio.destination);o.start();o.stop(audio.currentTime+3);showToast('已播放一声清远钟鸣（测试音效）')}else showToast('声音已关闭')};
-function animate(){requestAnimationFrame(animate);let dt=Math.min(clock.getDelta(),.04);let forward=(keys.w||keys.arrowup?-1:0)+(keys.s||keys.arrowdown?1:0)-joy.y;let side=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x;let v=new THREE.Vector3(side,0,forward);if(v.length()>1)v.normalize();let speed=10;let sin=Math.sin(yaw),cos=Math.cos(yaw);let dx=(v.x*cos+v.z*sin)*speed*dt,dz=(-v.x*sin+v.z*cos)*speed*dt;player.position.x=THREE.MathUtils.clamp(player.position.x+dx,-78,78);player.position.z=THREE.MathUtils.clamp(player.position.z+dz,-78,78);if(v.lengthSq()>.01)player.rotation.y=Math.atan2(dx,dz);let target=new THREE.Vector3(player.position.x+Math.sin(yaw)*13,7+pitch*5,player.position.z+Math.cos(yaw)*13);camera.position.lerp(target,.09);camera.lookAt(player.position.x,1.2,player.position.z);let t=clock.elapsedTime;smoke.forEach(s=>{s.position.y=s.userData.baseY+Math.sin(t*s.userData.speed+s.userData.phase)*.5+t%5*.12;s.position.x+=Math.sin(t+s.userData.phase)*.0015;s.material.opacity=.12+Math.sin(t+s.userData.phase)*.04});if(Math.floor(t*3)%2===0)nearest();renderer.render(scene,camera)}animate();
-addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
-showToast('第二阶段地图已载入：无隅寺九大区域');
-</script></body></html>
+building(0,-31,18,12,7,0xb99c75,'大雄宝殿');
+building(31,-23,12,10,4.5,0x9c7959,'斋面馆');
+building(31,23,12,10,4.8,0xa28c6c,'方丈禅院');
+function tree(x,z,scale=1,leaf=0x315d3e){let trunk=new THREE.Mesh(new THREE.CylinderGeometry(.35*scale,.55*scale,4*scale,8),mat(0x60452d));trunk.position.set(x,2*scale,z);trunk.castShadow=true;scene.add(trunk);for(let i=0;i<4;i++){let crown=new THREE.Mesh(new THREE.SphereGeometry((2.1-i*.15)*scale,12,10),mat(leaf));crown.position.set(x+(Math.random()-.5)*1.2*scale,4.2*scale+i*.65*scale,z+(Math.random()-.5)*1.2*scale);crown.castShadow=true;scene.add(crown)}}
+tree(-31,-23,2.2,0x28583b);
+for(let i=0;i<17;i++){let a=i/17*Math.PI*2;tree(-31+Math.cos(a)*6,-23+Math.sin(a)*6,.7,0x3c7148)}
+// peach tree
+tree(0,31,1.9,0x547c48);for(let i=0;i<18;i++){let a=i*2.4,r=1.2+Math.random()*1.4;let p=new THREE.Mesh(new THREE.SphereGeometry(.22,8,8),mat(0xe8a0a0));p.position.set(Math.cos(a)*r,4.2+Math.random()*2,31+Math.sin(a)*r);scene.add(p)}
+// yard and deer enclosure
+for(let x=-38;x<=-24;x+=2)for(let z=-6;z<=6;z+=2)if(Math.random()>.35)tree(x,z,.42,0x48764b);
+for(let x=25;x<=37;x+=3){box(x,.65,7,.12,1.3, .12,0x876a45);box(x,.65,-7,.12,1.3,.12,0x876a45)}box(31,1,7,13,.12,.12,0x876a45);box(31,1,-7,13,.12,.12,0x876a45);
+function deer(x,z){let body=new THREE.Mesh(new THREE.SphereGeometry(.65,12,10),mat(0xb68b5e));body.scale.set(1.35,.8,.75);body.position.set(x,1,z);scene.add(body);let head=new THREE.Mesh(new THREE.SphereGeometry(.34,10,8),mat(0xb68b5e));head.position.set(x+.85,1.55,z);scene.add(head);for(let dx of [-.35,.35])for(let dz of [-.22,.22]){let leg=new THREE.Mesh(new THREE.CylinderGeometry(.07,.09,.65,7),mat(0x755338));leg.position.set(x+dx,.48,z+dz);scene.add(leg)}}
+deer(29,-1);deer(34,2);
+function stall(){box(-31,.8,23,5,1.6,3,0x806044);box(-31,2,23,6,.18,3.5,0x8b4935);for(let x of [-33.5,-28.5])box(x,1.3,23,.15,2.6,.15,0x60432c)}stall();
+function incense(x,z){let base=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.45,.7,16),mat(0x66564a));base.position.set(x,.38,z);scene.add(base);let bowl=new THREE.Mesh(new THREE.CylinderGeometry(.95,1.15,.25,16),mat(0x9b7849));bowl.position.set(x,.85,z);scene.add(bowl);for(let i=0;i<4;i++){let stick=new THREE.Mesh(new THREE.CylinderGeometry(.025,.025,.9,6),mat(0x4a3427));stick.position.set(x+(i-1.5)*.22,1.35,z);scene.add(stick)}}
+incense(0,4);incense(-4,0);incense(4,0);
+// lamps, rocks, perimeter trees
+for(let i=0;i<18;i++){let a=i/18*Math.PI*2;let x=Math.cos(a)*49,z=Math.sin(a)*49;tree(x,z,.8)}
+for(let x of [-10,10])for(let z of [-10,10]){let b=new THREE.Mesh(new THREE.CylinderGeometry(.18,.24,1.2,8),mat(0x6b5840));b.position.set(x,.6,z);scene.add(b);let l=new THREE.Mesh(new THREE.SphereGeometry(.28,8,8),mat(0xe7c58a));l.position.set(x,1.35,z);scene.add(l)}
+// area markers and labels
+areas.forEach(a=>{if(!a.w&&!a.tree&&!a.yard&&!a.deer&&!a.stall&&!a.peach&&!a.center){return}if(a.yard){let p=new THREE.Mesh(new THREE.CylinderGeometry(6,6,.1,24),mat(0x71876a));p.position.set(a.x,.06,a.z);scene.add(p)}if(a.stall){}if(a.center){textSprite('香火广场',0,3.1,8)}else if(a.tree){textSprite(a.name,a.x,7.2,a.z+2)}else if(a.peach){textSprite(a.name,a.x,7,a.z+2)}else{textSprite(a.name,a.x,a.h? a.h+1.8:3.2,a.z+ (a.d? a.d/2+1:2))}});
+const player=new THREE.Group();
+const monk=new THREE.Group();player.add(monk);
+const robeMat=mat(0x76513d), robeLight=mat(0x9a704d), skinMat=mat(0xd5ad88), darkMat=mat(0x3d3028);
+function limb(parent,geo,material,x,y,z){const m=new THREE.Mesh(geo,material);m.position.set(x,y,z);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+// 宽袖僧袍躯干与衣摆
+limb(monk,new THREE.CylinderGeometry(.34,.53,1.12,12),robeMat,0,.88,0);
+limb(monk,new THREE.CylinderGeometry(.50,.53,.16,12),robeLight,0,.34,0);
+limb(monk,new THREE.SphereGeometry(.22,12,10),skinMat,0,1.53,0);
+limb(monk,new THREE.SphereGeometry(.285,16,12),skinMat,0,1.88,0);
+// 剃度头部、耳朵与简单面部
+limb(monk,new THREE.SphereGeometry(.292,16,12),mat(0x49372d),0,1.96,0);
+limb(monk,new THREE.SphereGeometry(.055,8,8),skinMat,-.29,1.9,0);
+limb(monk,new THREE.SphereGeometry(.055,8,8),skinMat,.29,1.9,0);
+limb(monk,new THREE.SphereGeometry(.025,8,8),darkMat,-.105,1.98,.265);
+limb(monk,new THREE.SphereGeometry(.025,8,8),darkMat,.105,1.98,.265);
+// 交叠袈裟布带
+const sash=limb(monk,new THREE.BoxGeometry(.16,.9,.045),robeLight,.08,.91,.31);sash.rotation.z=-.28;
+// 肩部摆臂：走路时自然前后摆动
+const armL=new THREE.Group();armL.position.set(-.39,1.31,0);monk.add(armL);
+limb(armL,new THREE.CylinderGeometry(.13,.105,.67,10),robeMat,0,-.31,0).rotation.z=-.12;
+limb(armL,new THREE.SphereGeometry(.115,10,8),skinMat,0,-.69,.015);
+const armR=new THREE.Group();armR.position.set(.39,1.31,0);monk.add(armR);
+limb(armR,new THREE.CylinderGeometry(.13,.105,.67,10),robeMat,0,-.31,0).rotation.z=.12;
+limb(armR,new THREE.SphereGeometry(.115,10,8),skinMat,0,-.69,.015);
+// 袍下露出的裤脚与布鞋
+const legL=new THREE.Group();legL.position.set(-.19,.36,0);monk.add(legL);
+limb(legL,new THREE.CylinderGeometry(.115,.10,.42,9),darkMat,0,-.13,0);
+limb(legL,new THREE.BoxGeometry(.22,.12,.38),darkMat,0,-.36,.09);
+const legR=new THREE.Group();legR.position.set(.19,.36,0);monk.add(legR);
+limb(legR,new THREE.CylinderGeometry(.115,.10,.42,9),darkMat,0,-.13,0);
+limb(legR,new THREE.BoxGeometry(.22,.12,.38),darkMat,0,-.36,.09);
+player.position.set(0,0,10);scene.add(player);
+let yaw=0,pitch=.28,dist=8;const keys={};let sound=false,audioCtx=null;addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key.toLowerCase()==='e')interact()});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+let dragging=false,lastX=0,lastY=0;renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){dragging=true;lastX=e.clientX;lastY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)}});renderer.domElement.addEventListener('pointerup',()=>dragging=false);renderer.domElement.addEventListener('pointermove',e=>{if(dragging){yaw-=(e.clientX-lastX)*.006;pitch=Math.max(-.05,Math.min(.85,pitch+(e.clientY-lastY)*.004));lastX=e.clientX;lastY=e.clientY}});renderer.domElement.addEventListener('wheel',e=>{dist=Math.max(4,Math.min(15,dist+e.deltaY*.008))});
+let joy={x:0,y:0},joyEl=document.getElementById('joy'),stick=document.getElementById('stick'),joyOn=false;
+joyEl.addEventListener('pointerdown',e=>{joyOn=true;joyEl.setPointerCapture(e.pointerId);moveJoy(e)});joyEl.addEventListener('pointermove',e=>{if(joyOn)moveJoy(e)});function moveJoy(e){let r=joyEl.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),len=Math.hypot(dx,dy),max=38;if(len>max){dx=dx/len*max;dy=dy/len*max}joy.x=dx/max;joy.y=dy/max;stick.style.transform=`translate(${dx}px,${dy}px)`}function endJoy(){joyOn=false;joy.x=joy.y=0;stick.style.transform=''}joyEl.addEventListener('pointerup',endJoy);joyEl.addEventListener('pointercancel',endJoy);
+let look=document.getElementById('look'),lookOn=false,lx=0,ly=0;look.addEventListener('pointerdown',e=>{lookOn=true;look.setPointerCapture(e.pointerId);lx=e.clientX;ly=e.clientY});look.addEventListener('pointermove',e=>{if(lookOn){yaw-=(e.clientX-lx)*.009;pitch=Math.max(-.05,Math.min(.85,pitch+(e.clientY-ly)*.006));lx=e.clientX;ly=e.clientY}});look.addEventListener('pointerup',()=>lookOn=false);look.addEventListener('pointercancel',()=>lookOn=false);
+function nearest(){let best=null,bd=1e9;for(const a of areas){let d=Math.hypot(player.position.x-a.x,player.position.z-a.z);if(d<bd){bd=d;best=a}}return bd<8?best:null}
+function interact(){let a=nearest();if(!a){toast('附近没有可互动的景点');return}document.getElementById('ptitle').textContent=a.name;document.getElementById('ptext').textContent=a.desc;document.getElementById('panel').style.display='flex'}
+document.getElementById('close').onclick=()=>document.getElementById('panel').style.display='none';
+function toast(t){let el=document.getElementById('toast');el.textContent=t;el.style.display='block';clearTimeout(toast.timer);toast.timer=setTimeout(()=>el.style.display='none',1800)}
+function beep(){if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.setValueAtTime(520,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(260,audioCtx.currentTime+1.3);g.gain.setValueAtTime(.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.16,audioCtx.currentTime+.04);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+2);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+2)}
+document.getElementById('sound').onclick=()=>{sound=!sound;document.getElementById('sound').textContent='♫ 声音：'+(sound?'开启':'关闭');if(sound){beep();toast('测试钟声音已开启')}else toast('声音已关闭')};
+const clock=new THREE.Clock();
+function animate(){requestAnimationFrame(animate);let dt=Math.min(clock.getDelta(),.05);let forward=(keys.w||keys.arrowup?1:0)-(keys.s||keys.arrowdown?1:0)-joy.y;let side=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0)+joy.x;let len=Math.hypot(forward,side);if(len>1){forward/=len;side/=len}let speed=8;let dx=(Math.sin(yaw)*forward+Math.cos(yaw)*side)*speed*dt;let dz=(Math.cos(yaw)*forward-Math.sin(yaw)*side)*speed*dt;player.position.x=THREE.MathUtils.clamp(player.position.x+dx,-57,57);player.position.z=THREE.MathUtils.clamp(player.position.z+dz,-57,57);if(len>.08)player.rotation.y=Math.atan2(dx,dz);
+const moving=len>.08;
+const walkT=clock.elapsedTime*9;
+const swing=moving?Math.sin(walkT)*.52:0;
+legL.rotation.x=swing;legR.rotation.x=-swing;
+armL.rotation.x=-swing*.72;armR.rotation.x=swing*.72;
+monk.position.y=moving?Math.abs(Math.sin(walkT*2))*.035:0;
+monk.rotation.z=moving?Math.sin(walkT)*.018:0;
+let target=new THREE.Vector3(player.position.x-Math.sin(yaw)*dist,2.7+pitch*5,player.position.z-Math.cos(yaw)*dist);camera.position.lerp(target,.14);camera.lookAt(player.position.x,1.25,player.position.z);
+let a=nearest(),hint=document.getElementById('hint');if(a){hint.style.display='block';hint.innerHTML=`附近：<b>${a.name}</b><br>按 E 键 / 靠近后互动` }else hint.style.display='none';
+renderer.render(scene,camera)}
+animate();addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+</script>
+</body></html>
